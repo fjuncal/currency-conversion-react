@@ -23,16 +23,46 @@ const CurrencyConverter = () => {
     console.log(rates.length);
   }, []);
 
+  useEffect(() => {
+    if (rates) {
+      const rateFrom = rates[fromCurrency] || 0;
+      const rateTo = rates[toCurrency] || 0;
+      setConvertedAmount(((amount / rateFrom) * rateTo).toFixed(2));
+    }
+  }, [amount, rates, fromCurrency, toCurrency]);
+
+  if (Object.values(rates).length == 0) {
+    return <h1>Carregando...</h1>;
+  }
   return (
     <div className="converter">
       <h2>Conversor de Moedas</h2>
-      <input type="number" placeholder="Digite o valor..." />
+      <input
+        type="number"
+        placeholder="Digite o valor..."
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+      />
       <span>Selecione as moedas</span>
-      <select>
-        <option value="BRL">BRL</option>
+      <select
+        value={fromCurrency}
+        onChange={(e) => setFromCurrency(e.target.value)}
+      >
+        {Object.keys(rates).length > 0 ? (
+          Object.keys(rates).map((currency) => (
+            <option value={currency} key={currency}>
+              {currency}
+            </option>
+          ))
+        ) : (
+          <option>loading...</option>
+        )}
       </select>
       <span>para</span>
-      <select>
+      <select
+        value={toCurrency}
+        onChange={(e) => setToCurrency(e.target.value)}
+      >
         {Object.keys(rates).length > 0 ? (
           Object.keys(rates).map((currency) => (
             <option value={currency} key={currency}>
